@@ -10,7 +10,8 @@ MAINTAINER Martijn Koster "https://github.com/makuk66"
 RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list && \
         apt-get update && \
         apt-get upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git-core curl wget python-yaml build-essential libssl-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git-core curl wget build-essential
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-yaml libssl-dev
 
 # Ensure UTF-8
 RUN locale-gen en_US.UTF-8
