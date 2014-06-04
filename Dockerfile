@@ -1,15 +1,12 @@
 # Based on https://github.com/akisei/dockerfiles/blob/master/oracle-java7/Dockerfile
 # See also http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
 
-# Use Ubuntu 12.04 as the base image
-FROM ubuntu:12.04
+FROM ubuntu:14.04
 
 MAINTAINER Martijn Koster "https://github.com/makuk66"
 
 # Install a bunch of prerequisites
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list && \
-        apt-get update && \
-        apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git-core curl wget build-essential
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-yaml libssl-dev
 
@@ -19,7 +16,7 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
 # Install java
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install python-software-properties
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install software-properties-common
 RUN add-apt-repository ppa:webupd8team/java
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y upgrade
 
