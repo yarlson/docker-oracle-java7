@@ -29,5 +29,9 @@ RUN update-alternatives --display java
 # set the java environment variables for when you "bash -l"
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install oracle-java7-set-default && apt-get clean
 
+# clean
+RUN DEBIAN_FRONTEND=noninteractive apt-get clean
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # set the JAVA_HOME explicitly
 ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
