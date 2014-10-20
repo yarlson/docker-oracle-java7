@@ -27,7 +27,8 @@ RUN echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install oracle-java7-installer
 RUN update-alternatives --display java
 # set the java environment variables for when you "bash -l"
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install oracle-java7-set-default && apt-get clean
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install oracle-java7-set-default
+
 # remove the jdk cache, which takes up 136M, as it includes the jdk tarball
 RUN rm -fr /var/cache/oracle-jdk7-installer
 
