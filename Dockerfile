@@ -1,40 +1,33 @@
-# Based on https://github.com/akisei/dockerfiles/blob/master/oracle-java7/Dockerfile
-# See also http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
-
-FROM ubuntu:14.04
+FROM debian:latest
 
 MAINTAINER Martijn Koster "https://github.com/makuk66"
 
-# Install a bunch of prerequisites
-RUN apt-get update && apt-get upgrade -y
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git-core curl wget build-essential
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-yaml libssl-dev
+RUN \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee /etc/apt/sources.list.d/webupd8team-java.list && \
+    echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
+    apt-get update && \
+    apt-get -y install locales && \
+    sed -i.bak -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen && \
+    update-locale LC_ALL= "en_US.UTF-8" && \
+    export LANGUAGE=en_US:en && \
+    export LANG=en_US.UTF-8 && \
+    export LC_ALL=en_US.UTF-8 && \
+    dpkg-reconfigure locales && \
+    echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
+    apt-get -y install oracle-java7-installer && \
+    update-alternatives --display java && \
+    apt-get -y install oracle-java7-set-default && \
+    rm -fr /var/cache/oracle-jdk7-installer && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Ensure UTF-8
-RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
+ENV LANGUAGE   en_US:en
 
-# Install java
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install software-properties-common
-RUN add-apt-repository ppa:webupd8team/java
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y upgrade
-
-# automatically accept oracle license
-RUN echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-
-# and install java 7 oracle jdk
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install oracle-java7-installer
-RUN update-alternatives --display java
-# set the java environment variables for when you "bash -l"
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install oracle-java7-set-default
-
-# remove the jdk cache, which takes up 136M, as it includes the jdk tarball
-RUN rm -fr /var/cache/oracle-jdk7-installer
-
-# clean
-RUN DEBIAN_FRONTEND=noninteractive apt-get clean
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# set the JAVA_HOME explicitly
 ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
